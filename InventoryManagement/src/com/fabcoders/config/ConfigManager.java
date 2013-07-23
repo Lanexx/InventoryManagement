@@ -56,7 +56,8 @@ public final class ConfigManager {
     public static String[] COLORS;
     public static String[] SIZE;
     public static String[] GENDER;
-    public static String SPARQL_URL;
+    public static String STOCK_SPARQL_URL;
+    public static String PRODUCT_SPARQL_URL;
     public static String ENDPOINT_USERNAME;
     public static String ENDPOINT_PASSWORD;
     
@@ -75,7 +76,8 @@ public final class ConfigManager {
             GENDER = configProp.getProperty("type.gender","").split(":");
             MOVEMENT_HOMEPLACE = configProp.getProperty("movement.homeplace");
             HISTORY_LOG_FILE = configProp.getProperty("history.log.file");
-            SPARQL_URL = configProp.getProperty("sparql.url");
+            PRODUCT_SPARQL_URL = configProp.getProperty("product.sparql.endpoint.url");
+            STOCK_SPARQL_URL = configProp.getProperty("stock.sparql.endpoint.url");
             ENDPOINT_USERNAME = configProp.getProperty("endpoint.username");
             ENDPOINT_PASSWORD = configProp.getProperty("endpoint.password");
         } catch (Exception e) {
@@ -97,21 +99,32 @@ public final class ConfigManager {
             JOptionPane.showMessageDialog(null,  e.getMessage());
             System.exit(1);
         }
-        
+
         // check if dataset file exists
         try {
-            URL url = new URL(SPARQL_URL);
+            URL url = new URL(PRODUCT_SPARQL_URL);
             HttpURLConnection httpConn =  (HttpURLConnection)url.openConnection();
             httpConn.setInstanceFollowRedirects( false );
             httpConn.setRequestMethod( "HEAD" ); 
             httpConn.connect();
             httpConn.disconnect();
-            
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Dataset Endpoint is not connected");
+            JOptionPane.showMessageDialog(null, "Product Endpoint is not connected");
             System.exit(1);
         }
-        
+        try {
+
+            URL url = new URL(STOCK_SPARQL_URL);
+            HttpURLConnection httpConn =  (HttpURLConnection)url.openConnection();
+            httpConn.setInstanceFollowRedirects( false );
+            httpConn.setRequestMethod( "HEAD" ); 
+            httpConn.connect();
+            httpConn.disconnect();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Stock Endpoint is not connected");
+            System.exit(1);
+        }
+
         // check if file to upload images exist
         File f = new File(IMAGE_LOCATION);
         if (!f.exists()) {

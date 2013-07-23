@@ -14,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 
 import com.fabcoders.config.ConfigManager;
 import com.fabcoders.domain.Product;
-import com.fabcoders.domain.Stock;
 import com.fabcoders.exception.InventoryManagementException;
 import com.hp.hpl.jena.query.Query;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -32,7 +31,7 @@ import com.hp.hpl.jena.update.UpdateRequest;
 public class ProductRDFOperations {
 
     private static Log log = LogFactory.getLog(ProductRDFOperations.class);
-    private static String serviceUrl = ConfigManager.SPARQL_URL;
+    private static String serviceUrl = ConfigManager.PRODUCT_SPARQL_URL;
 
     private static String USERNAME = ConfigManager.ENDPOINT_USERNAME;
     private static String PASSWORD = ConfigManager.ENDPOINT_PASSWORD;
@@ -77,6 +76,8 @@ public class ProductRDFOperations {
             updateString.append(" product:size \""+product.getSize()+"\"^^xsd:string ;");
         if(null != product.getDescription() && !"".equals(product.getDescription()))
             updateString.append(" product:description \""+product.getDescription()+"\"^^xsd:string ; ");
+        if(null != product.getEpc() && !"".equals(product.getEpc()))
+            updateString.append(" product:epc \""+product.getEpc()+"\"^^xsd:string ; ");
         updateString.append("}");
         try {
             UpdateRequest update = UpdateFactory.create(updateString.toString());
@@ -151,6 +152,9 @@ public class ProductRDFOperations {
                 else if ("size".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setSize(sol.get("val").asLiteral().getString());
                 }
+                else if ("epc".equals(sol.get("prop").asResource().getLocalName())) {
+                    product.setEpc(sol.get("val").asLiteral().getString());
+                }
                 addLastObj = true;   
             }
             if(addLastObj)
@@ -180,7 +184,7 @@ public class ProductRDFOperations {
             Query query = QueryFactory.create(queryString);
             QueryEngineHTTP exec = (QueryEngineHTTP)QueryExecutionFactory.sparqlService(serviceUrl, query);
             exec.setBasicAuthentication(USERNAME, PASSWORD.toCharArray());
-            ResultSet rs = exec.execSelect();
+           ResultSet rs = exec.execSelect();
             product = new Product();
             String prevObj = "";
             String newObj = "";
@@ -227,6 +231,9 @@ public class ProductRDFOperations {
                 else if ("size".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setSize(sol.get("val").asLiteral().getString());
                 }
+                else if ("epc".equals(sol.get("prop").asResource().getLocalName())) {
+                    product.setEpc(sol.get("val").asLiteral().getString());
+                }
                 addLastObj = true;   
             }
             exec.close();
@@ -245,11 +252,12 @@ public class ProductRDFOperations {
 
     public static Product getItemForEPC(String epc) throws InventoryManagementException {
         log.warn("Entering ProductRDFOperations.getItemForEPC");
-        Stock stock =  StockRDFOperations.getStockDetailsForEpc(epc);
-        if(null != stock){
-            Product item =stock.getProduct();
-            item.setEpc(epc);
-            return item;
+        Model m = ModelFactory.createDefaultModel();
+        Literal literal= m.createLiteral("\""+epc+"\"^^<http://www.w3.org/2001/XMLSchema#string>");
+        List<Product> itemes = getItemForProperty("epc", literal);
+        if(!itemes.isEmpty()){
+            Product product = itemes.get(0);
+            return product;
         }
         else
             return null;
@@ -271,7 +279,7 @@ public class ProductRDFOperations {
         else
             return null;
     }
-    
+
     public static BufferedImage getPictureforItemNo(String itemNo) throws InventoryManagementException {
         log.warn("Entering ProductRDFOperations.getPictureforItemNo");
         BufferedImage bf = null;

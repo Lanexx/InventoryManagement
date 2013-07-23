@@ -31,7 +31,7 @@ import com.hp.hpl.jena.update.UpdateRequest;
 public class StockRDFOperations {
 
     private static Log log = LogFactory.getLog(StockRDFOperations.class);
-    private static String serviceUrl = ConfigManager.SPARQL_URL;
+    private static String serviceUrl = ConfigManager.STOCK_SPARQL_URL;
 
     private static String USERNAME = ConfigManager.ENDPOINT_USERNAME;
     private static String PASSWORD = ConfigManager.ENDPOINT_PASSWORD;
@@ -52,31 +52,10 @@ public class StockRDFOperations {
         String stockURI = "<http://localhost:8080/resource/stock/"+epc+">";
         
         StringBuilder updateString = new StringBuilder(prefix);
-        updateString.append("DELETE WHERE { "+stockURI+" stock:removedOn ?val;stock:soldOn ?val2 ;stock:soldTo ?val3 };");
-        updateString.append("INSERT DATA { ");
-        updateString.append(stockURI + "stock:addedOn \""+sdf.format(new Date())+"\"^^<http://www.w3.org/2001/XMLSchema#dateTime>.");
-        updateString.append("}");
-        try {
-            UpdateRequest update = UpdateFactory.create(updateString.toString());
-            UpdateProcessRemote riStore = new UpdateProcessRemote(update, serviceUrl,null,null);
-            riStore.setBasicAuthentication(USERNAME, PASSWORD);
-            riStore.execute();
-        } catch (Exception e) {
-            log.error("Exception Occured while adding to Stock",e);
-            throw new InventoryManagementException(e);
-        }
-        return 1;
-    }
-
-    public static int addStockDetails(String productid, String epc)throws InventoryManagementException {
-        log.warn("Entering StockRDFOperations.addStockDetails");
-        String stockURI = "<http://localhost:8080/resource/stock/"+epc+">";
-        
-        StringBuilder updateString = new StringBuilder(prefix);
         updateString.append("DELETE WHERE { "+stockURI+" ?prop ?val};");
         updateString.append("INSERT DATA { ");
         updateString.append(stockURI + " rdf:type <http://www.example.com/ns#stock> ;");
-        updateString.append("stock:itemType <http://localhost:8080/resource/product/"+productid+">; ");
+        updateString.append("stock:addedOn \""+sdf.format(new Date())+"\"^^<http://www.w3.org/2001/XMLSchema#dateTime>;");
         updateString.append("stock:hasEpcCode \""+epc+"\"^^<http://www.w3.org/2001/XMLSchema#string>.");
         updateString.append("}");
         try {
@@ -90,7 +69,7 @@ public class StockRDFOperations {
         }
         return 1;
     }
-    
+
     public static int removeFromStock(String epc)throws InventoryManagementException {
         log.warn("Entering StockRDFOperations.removeFromStock");
 
@@ -222,7 +201,6 @@ public class StockRDFOperations {
         String queryString = prefix
             + "SELECT ?stock ?prop ?val " 
             + "WHERE { "
-            + "    ?stock rdf:type <http://www.example.com/ns#stock> ."
             + "    ?stock ?prop ?val ."
             + "    ?stock stock:" + property + " " + value + " ." 
             + "}";
@@ -266,14 +244,6 @@ public class StockRDFOperations {
                 }
                 else if ("hasEpcCode".equals(sol.get("prop").asResource().getLocalName())) {
                     stock.setEpc(sol.get("val").asLiteral().getString());
-                }
-                else if ("itemType".equals(sol.get("prop").asResource().getLocalName())) {
-                    try {
-                        StringBuffer buffer =  new StringBuffer(sol.get("val").asResource().getURI());
-                        String itemNo = buffer.substring(buffer.lastIndexOf("/")+1, buffer.length());
-                        stock.setProduct(ProductRDFOperations.getItemForItemNo(itemNo));
-                    } catch (Exception e) {
-                    }
                 }
                 addLastObj = true;   
             }

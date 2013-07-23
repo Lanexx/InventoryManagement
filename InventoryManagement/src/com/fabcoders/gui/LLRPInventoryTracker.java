@@ -147,7 +147,6 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton13;
     private javax.swing.JButton jButton14;
-    private javax.swing.JButton jButton15;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -158,7 +157,7 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
     private javax.swing.JButton jButton9;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox10;
-    private javax.swing.JComboBox jComboBox12;
+   // private javax.swing.JComboBox jComboBox12;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JComboBox jComboBox3;
     private javax.swing.JComboBox jComboBox4;
@@ -207,8 +206,7 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
     private javax.swing.JLabel jLabel44;
     private javax.swing.JLabel jLabel45;
     private javax.swing.JLabel jLabel46;
-    private javax.swing.JLabel jLabel48;
-    private javax.swing.JLabel jLabel49;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -236,7 +234,6 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JScrollPane jScrollPane9;
-    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
@@ -326,12 +323,9 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
         jComboBox5 = new javax.swing.JComboBox();
         jComboBox6 = new javax.swing.JComboBox();
         jTextField5 = new javax.swing.JTextField();
-        jLabel48 = new javax.swing.JLabel();
-        jComboBox12 = new javax.swing.JComboBox();
-        jLabel49 = new javax.swing.JLabel();
-        jButton15 = new javax.swing.JButton();
+        jLabel5 = new javax.swing.JLabel();
+       // jComboBox12 = new javax.swing.JComboBox();
         jTextField4 = new javax.swing.JTextField();
-        jSeparator1 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel4 = new javax.swing.JPanel();
         jLabel17 = new javax.swing.JLabel();
@@ -674,6 +668,7 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                 jButton4KeyPressed(evt);
             }
         });
+
         jLabel11.setText("Description :");
 
         jButton7.setText("Upload Picture");
@@ -708,96 +703,72 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
 
         jLabel14.setText("Photo :");
 
-        jLabel48.setText("Select Product :");
+        jLabel5.setText("EPC :");
 
-        jLabel49.setText("EPC :");
-
-        jButton15.setText("Associate Inventory");
-        jButton15.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton15MouseClicked(evt);
-            }
-        });
-        
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSeparator1)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(35, 35, 35)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel8)
-                                    .addComponent(jLabel11))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jComboBox2, 0, 162, Short.MAX_VALUE)
-                                    .addComponent(jComboBox4, 0, 162, Short.MAX_VALUE)
-                                    .addComponent(jTextField5)
-                                    .addComponent(jTextField2))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addContainerGap(192, Short.MAX_VALUE)
-                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(41, 41, 41)))
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(jLabel10)
-                                        .addComponent(jLabel9))
-                                    .addGap(51, 61, Short.MAX_VALUE)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jComboBox5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jComboBox6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jLabel4)
-                                        .addComponent(jLabel7))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jComboBox3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jTextField3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 120, Short.MAX_VALUE)
-                        .addComponent(jLabel14))
+                        .addGap(224, 224, 224)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(41, 41, 41)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(73, 73, 73)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel48)
-                            .addComponent(jLabel49))
-                        .addGap(18, 18, 18)
+                        .addGap(35, 35, 35)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel5))
+                        .addGap(30, 30, 30)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jComboBox12, 0, 203, Short.MAX_VALUE)
+                            .addComponent(jComboBox2, 0, 162, Short.MAX_VALUE)
+                            .addComponent(jComboBox4, 0, 162, Short.MAX_VALUE)
+                            .addComponent(jTextField5)
+                            .addComponent(jTextField2)
                             .addComponent(jTextField4))
-                        .addGap(42, 42, 42)
-                        .addComponent(jButton15)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel10))
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jComboBox3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jComboBox6, 0, 162, Short.MAX_VALUE)
+                                .addComponent(jTextField3)
+                                .addComponent(jComboBox5, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+                        .addComponent(jLabel14)
+                        .addGap(10, 10, 10)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(58, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(35, 35, 35)
+                .addGap(100, 100, 100)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4)
-                            .addComponent(jLabel3))
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel14))
                         .addGap(24, 24, 24)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -808,35 +779,23 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel8)
-                            .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9))
+                            .addComponent(jLabel9)
+                            .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(27, 27, 27)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel11)
-                            .addComponent(jLabel10))
+                            .addComponent(jLabel10)
+                            .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(30, 30, 30)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel48)
-                            .addComponent(jComboBox12, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel49)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(12, 12, 12)
-                        .addComponent(jButton15, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(85, 85, 85))
+                .addContainerGap(146, Short.MAX_VALUE))
         );
 
         jScrollPane7.setViewportView(jPanel1);
@@ -1397,13 +1356,13 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                 jComboBox6.insertItemAt(item, i++);
             }
         }
-        loadProductIds();
+       // loadProductIds();
     }
 
     /**
      * 
      */
-    private void loadProductIds() {
+   /* private void loadProductIds() {
         try {
             List<Product> items = ProductRDFOperations.getAllProducts();
             jComboBox12.removeAllItems();
@@ -1417,7 +1376,7 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
         } catch (InventoryManagementException e) {
             logMessage(e.getMessage());
         }
-    }
+    }*/
     
     /**
      * Loads elements in page3. this method loads previous transaction history
@@ -1579,39 +1538,7 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
         }
     }
 
-    /**
-     * @param evt
-     */
-    private void jButton15MouseClicked(MouseEvent evt) {
-
-        String epc = (String) jTextField4.getText();
-        String productid = (String) jComboBox12.getSelectedItem();
-        if (null == productid || "".equalsIgnoreCase(productid)) {
-            JOptionPane.showMessageDialog(this, "Please select the product");
-            jTextField2.requestFocus();
-            return;
-        }else if (null == epc || "".equalsIgnoreCase(epc)) {
-            JOptionPane.showMessageDialog(this,
-            "Please Enter Electronic Product Code (EPC) to associate");
-            jTextField4.requestFocus();
-            return;
-        } else if (!"".equals(epc) && !epc.matches("^[0-9A-Fa-f]{24}$")) {
-            JOptionPane.showMessageDialog(this,
-            "EPC is a HexaDecimal Value Of 24 Length");
-            jTextField4.requestFocus();
-            return;
-        }else{
-            try {
-                StockRDFOperations.addStockDetails(productid, epc);
-                JOptionPane.showMessageDialog(this,
-                "Item Added to stock successfully");
-                jComboBox12.setSelectedIndex(-1);
-                jTextField4.setText("");
-            } catch (InventoryManagementException e) {
-                logMessage(e.getMessage());
-            }
-        }
-    }
+    
     /**
      * This method resets the associate form
      * @param evt
@@ -1620,6 +1547,7 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
         
         jTextField2.setText("");
         jTextField3.setText("");
+        jTextField4.setText("");
         jTextField5.setText("");
         jComboBox2.setSelectedIndex(-1);
         jComboBox3.setSelectedIndex(-1);
@@ -1649,6 +1577,7 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
             String size = (String) jComboBox5.getSelectedItem();
             String sex = (String) jComboBox6.getSelectedItem();
             String description = jTextField5.getText();
+            String epc = (String) jTextField4.getText();
 
             if (null == itemNo || "".equalsIgnoreCase(itemNo)) {
                 JOptionPane.showMessageDialog(this, "Please Enter Item No");
@@ -1687,11 +1616,21 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                         "Please Select Sex");
                 jComboBox6.requestFocus();
                 return;
-            }  else if (null == addImage) {
+            } else if (null == addImage) {
                 JOptionPane.showMessageDialog(this,
                         "Please Upload the Product Image");
                 return;
-            } 
+            } else if (null == epc || "".equalsIgnoreCase(epc)) {
+                JOptionPane.showMessageDialog(this,
+                "Please Enter Electronic Product Code (EPC) to associate");
+                jTextField4.requestFocus();
+                return;
+            } else if (!"".equals(epc) && !epc.matches("^[0-9A-Fa-f]{24}$")) {
+                JOptionPane.showMessageDialog(this,
+                "EPC is a HexaDecimal Value Of 24 Length");
+                jTextField4.requestFocus();
+                return;
+            }
             jButton3.setEnabled(false);
 
             try {
@@ -1709,11 +1648,12 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                 product.setSex(sex);
                 product.setSize(size);
                 product.setDescription(description);
+                product.setEpc(epc);
                 product.setImage(outputFile.getName());
                 ProductRDFOperations.create(product);
                 JOptionPane.showMessageDialog(this, "Added Product Successfully");
                 jButton4MouseClicked(null);
-                loadProductIds();
+               // loadProductIds();
             } catch (InventoryManagementException e) {
                 JOptionPane.showMessageDialog(this, "Failed to add Item: " + e.getMessage());
                 log.warn("Exception Occured while Associating product to Tagid", e);
@@ -2328,14 +2268,15 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                 if(null == item){
                     continue;
                 }
+                
                 //add item to Inventory stock
                 if(antennaID == inAntenna){
                     isPresentInStock = itemsInStock.contains(tagId);
                     if(!isPresentInStock)
                     {
+                        StockRDFOperations.addToStock(tagId);
                         addItemToJtable6(item);
                         itemsInStock.add(tagId);
-                        StockRDFOperations.addToStock(tagId);
                         ((DefaultListModel)jList3.getModel()).addElement(tagId);
                         
                         // adding entry to history
@@ -2355,13 +2296,12 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                     if(isPresentInStock)
                     {
                         // remove from stock available
-                        removeFromJtable6(tagId);
                         StockRDFOperations.removeFromStock(tagId);
+                        removeFromJtable6(tagId);
                         itemsInStock.remove(tagId);
                         
                         // remove from items all the other places
                         removeFromOthrPlaces(tagId);
-                        
                         
                         // adding entry to history
                         StockHistoryEvent event = new StockHistoryEvent();

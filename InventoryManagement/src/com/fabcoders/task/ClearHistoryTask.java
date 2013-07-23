@@ -16,7 +16,7 @@ import com.hp.hpl.jena.update.UpdateRequest;
 public class ClearHistoryTask extends TimerTask {
 
     private static Log log = LogFactory.getLog(ClearHistoryTask.class);
-    private static String serviceUrl = ConfigManager.SPARQL_URL;
+    private static String serviceUrl = ConfigManager.STOCK_SPARQL_URL;
 
     private static String USERNAME = ConfigManager.ENDPOINT_USERNAME;
     private static String PASSWORD = ConfigManager.ENDPOINT_PASSWORD;

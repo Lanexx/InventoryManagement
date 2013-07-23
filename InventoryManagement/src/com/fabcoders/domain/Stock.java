@@ -6,8 +6,6 @@ public class Stock implements Comparable<Stock>{
 
     private String epc;
     
-    private Product product;
-    
     private Date addedOn;
     
     private Date removedOn;
@@ -30,20 +28,6 @@ public class Stock implements Comparable<Stock>{
      */
     public void setEpc(String epc) {
         this.epc = epc;
-    }
-
-    /**
-     * @return the item
-     */
-    public Product getProduct() {
-        return product;
-    }
-
-    /**
-     * @param item the item to set
-     */
-    public void setProduct(Product product) {
-        this.product = product;
     }
 
     /**
@@ -161,8 +145,7 @@ public class Stock implements Comparable<Stock>{
      */
     @Override
     public String toString() {
-        return "Stock [addedOn=" + addedOn + ", epc=" + epc + ", product=" + product
-                + ", removedOn=" + removedOn + ", sold=" + sold + ", soldOn="
+        return "Stock [addedOn=" + addedOn + ", epc=" + epc + ", removedOn=" + removedOn + ", sold=" + sold + ", soldOn="
                 + soldOn + ", soldTo=" + soldTo + "]";
     }
     
