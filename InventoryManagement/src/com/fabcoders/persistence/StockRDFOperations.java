@@ -36,7 +36,7 @@ public class StockRDFOperations {
     private static String USERNAME = ConfigManager.ENDPOINT_USERNAME;
     private static String PASSWORD = ConfigManager.ENDPOINT_PASSWORD;
     
-    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private static final String prefix =
         "PREFIX gr: <http://purl.org/goodrelations/v1#> "

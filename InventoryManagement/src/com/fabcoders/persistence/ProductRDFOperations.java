@@ -44,6 +44,7 @@ public class ProductRDFOperations {
       + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
       + "PREFIX vcard: <http://www.w3.org/2006/vcard/ns#> "
       + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>"
+      + "PREFIX dct: <http://purl.org/dc/terms/> "
       + "PREFIX product: <http://www.example.com/product-ns.rdf#> ";
     
     
@@ -57,27 +58,25 @@ public class ProductRDFOperations {
         updateString.append("INSERT DATA { ");
         updateString.append(productURI + " rdf:type gr:ProductOrServiceModel ; ");
         if(null != product.getProductName() && !"".equals(product.getProductName()))
-            updateString.append(" product:name \""+product.getProductName()+"\"^^xsd:string ;");
+            updateString.append(" gr:name \""+product.getProductName()+"\"^^xsd:string ;");
         if(null != product.getProductCode() && !"".equals(product.getProductCode()))
-            updateString.append(" product:code \""+product.getProductCode()+"\"^^xsd:string ;");
+            updateString.append(" gr:serialNumber \""+product.getProductCode()+"\"^^xsd:string ;");
         if(null != product.getProductGroup() && !"".equals(product.getProductGroup()))
-            updateString.append(" product:group \""+product.getProductGroup()+"\"^^xsd:string ;");
+            updateString.append(" gr:category \""+product.getProductGroup()+"\"^^xsd:string ;");
         if(null != product.getColor() && !"".equals(product.getColor()))
-            updateString.append(" product:color \""+product.getColor()+"\"^^xsd:string ;");
+            updateString.append(" gr:color \""+product.getColor()+"\"^^xsd:string ;");
         if(null != product.getImage() && !"".equals(product.getImage()))
-            updateString.append(" product:image <"+product.getImage()+"> ;");
-        if(null != product.getPage() && !"".equals(product.getPage()))
-            updateString.append(" product:page <"+product.getPage()+"> ;");
+            updateString.append(" foaf:depiction <"+product.getImage()+"> ;");
         if(null != product.getCollection() && !"".equals(product.getCollection()))
-            updateString.append(" product:collection \""+product.getCollection()+"\"^^xsd:string ;");
+            updateString.append(" dct:isPartOf \""+product.getCollection()+"\"^^xsd:string ;");
         if(null != product.getSex() && !"".equals(product.getSex()))
             updateString.append(" product:sex \""+product.getSex()+"\"^^xsd:string ;");
         if(null != product.getSize() && !"".equals(product.getSize()))
             updateString.append(" product:size \""+product.getSize()+"\"^^xsd:string ;");
         if(null != product.getDescription() && !"".equals(product.getDescription()))
-            updateString.append(" product:description \""+product.getDescription()+"\"^^xsd:string ; ");
+            updateString.append(" gr:description \""+product.getDescription()+"\"^^xsd:string ; ");
         if(null != product.getEpc() && !"".equals(product.getEpc()))
-            updateString.append(" product:epc \""+product.getEpc()+"\"^^xsd:string ; ");
+            updateString.append(" gr:hasEAN_UCC-13 \""+product.getEpc()+"\"^^xsd:string ; ");
         updateString.append("}");
         try {
             UpdateRequest update = UpdateFactory.create(updateString.toString());
@@ -99,7 +98,7 @@ public class ProductRDFOperations {
         String queryString = prefix
             + "SELECT ?product ?prop ?val " 
             + "WHERE { " 
-            + "    ?product rdf:type gr:ProductOrServiceModel ;?prop ?val ; product:" + property + " " + value + " ." 
+            + "    ?product rdf:type gr:ProductOrServiceModel ;?prop ?val ; " + property + " " + value + " ." 
             + "}";
 
         try{
@@ -125,13 +124,13 @@ public class ProductRDFOperations {
                 if ("color".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setColor(sol.get("val").asLiteral().getString());
                 }
-                else if ("collection".equals(sol.get("prop").asResource().getLocalName())) {
+                else if ("isPartOf".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setCollection(sol.get("val").asLiteral().getString());
                 }
                 else if ("description".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setDescription(sol.get("val").asLiteral().getString());
                 }
-                else if ("code".equals(sol.get("prop").asResource().getLocalName())) {
+                else if ("serialNumber".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setProductCode(sol.get("val").asLiteral().getString());
                 }
                 else if ("name".equals(sol.get("prop").asResource().getLocalName())) {
@@ -140,19 +139,16 @@ public class ProductRDFOperations {
                 else if ("sex".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setSex(sol.get("val").asLiteral().getString());
                 }
-                else if ("group".equals(sol.get("prop").asResource().getLocalName())) {
+                else if ("category".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setProductGroup(sol.get("val").asLiteral().getString());
                 }
-                else if ("image".equals(sol.get("prop").asResource().getLocalName())) {
+                else if ("depiction".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setImage(sol.get("val").asResource().getURI());
                 } 
-                else if ("page".equals(sol.get("prop").asResource().getLocalName())) {
-                    product.setPage(sol.get("val").asResource().getURI());
-                }
                 else if ("size".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setSize(sol.get("val").asLiteral().getString());
                 }
-                else if ("epc".equals(sol.get("prop").asResource().getLocalName())) {
+                else if ("hasEAN_UCC-13".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setEpc(sol.get("val").asLiteral().getString());
                 }
                 addLastObj = true;   
@@ -166,7 +162,7 @@ public class ProductRDFOperations {
         }
         return products;
     }
-    
+
     public static List<Product> getAllProducts() throws InventoryManagementException {
 
         log.warn("Entering ProductRDFOperations.getAllProducts");
@@ -204,13 +200,13 @@ public class ProductRDFOperations {
                 if ("color".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setColor(sol.get("val").asLiteral().getString());
                 }
-                else if ("collection".equals(sol.get("prop").asResource().getLocalName())) {
+                else if ("isPartOf".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setCollection(sol.get("val").asLiteral().getString());
                 }
                 else if ("description".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setDescription(sol.get("val").asLiteral().getString());
                 }
-                else if ("code".equals(sol.get("prop").asResource().getLocalName())) {
+                else if ("serialNumber".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setProductCode(sol.get("val").asLiteral().getString());
                 }
                 else if ("name".equals(sol.get("prop").asResource().getLocalName())) {
@@ -219,19 +215,16 @@ public class ProductRDFOperations {
                 else if ("sex".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setSex(sol.get("val").asLiteral().getString());
                 }
-                else if ("group".equals(sol.get("prop").asResource().getLocalName())) {
+                else if ("category".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setProductGroup(sol.get("val").asLiteral().getString());
                 }
-                else if ("image".equals(sol.get("prop").asResource().getLocalName())) {
+                else if ("depiction".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setImage(sol.get("val").asResource().getURI());
                 } 
-                else if ("page".equals(sol.get("prop").asResource().getLocalName())) {
-                    product.setPage(sol.get("val").asResource().getURI());
-                }
                 else if ("size".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setSize(sol.get("val").asLiteral().getString());
                 }
-                else if ("epc".equals(sol.get("prop").asResource().getLocalName())) {
+                else if ("hasEAN_UCC-13".equals(sol.get("prop").asResource().getLocalName())) {
                     product.setEpc(sol.get("val").asLiteral().getString());
                 }
                 addLastObj = true;   
@@ -254,7 +247,7 @@ public class ProductRDFOperations {
         log.warn("Entering ProductRDFOperations.getItemForEPC");
         Model m = ModelFactory.createDefaultModel();
         Literal literal= m.createLiteral("\""+epc+"\"^^<http://www.w3.org/2001/XMLSchema#string>");
-        List<Product> itemes = getItemForProperty("epc", literal);
+        List<Product> itemes = getItemForProperty("gr:hasEAN_UCC-13", literal);
         if(!itemes.isEmpty()){
             Product product = itemes.get(0);
             return product;
@@ -270,7 +263,7 @@ public class ProductRDFOperations {
         }
         Model m = ModelFactory.createDefaultModel();
         Literal literal= m.createLiteral("\""+itemNo+"\"^^<http://www.w3.org/2001/XMLSchema#string>");
-        List<Product> itemes = getItemForProperty("code", literal);
+        List<Product> itemes = getItemForProperty("gr:serialNumber", literal);
         if(!itemes.isEmpty()){
             Product product = itemes.get(0);
             loadedProductMap.put(product.getProductCode(),product) ;
