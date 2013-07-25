@@ -36,14 +36,14 @@ public class StockRDFOperations {
     private static String USERNAME = ConfigManager.ENDPOINT_USERNAME;
     private static String PASSWORD = ConfigManager.ENDPOINT_PASSWORD;
     
-    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
 
     private static final String prefix =
         "PREFIX gr: <http://purl.org/goodrelations/v1#> "
       + "PREFIX foaf: <http://xmlns.com/foaf/0.1/> "
       + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> "
       + "PREFIX vcard: <http://www.w3.org/2006/vcard/ns#> "
-      + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>"
+      + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
       + "PREFIX stock: <http://www.example.com/stock-ns.rdf#> ";
     
     public static int addToStock(String epc)throws InventoryManagementException {
@@ -55,8 +55,8 @@ public class StockRDFOperations {
         updateString.append("DELETE WHERE { "+stockURI+" ?prop ?val};");
         updateString.append("INSERT DATA { ");
         updateString.append(stockURI + " rdf:type <http://www.example.com/ns#stock> ;");
-        updateString.append("stock:addedOn \""+sdf.format(new Date())+"\"^^<http://www.w3.org/2001/XMLSchema#dateTime>;");
-        updateString.append("stock:hasEpcCode \""+epc+"\"^^<http://www.w3.org/2001/XMLSchema#string>.");
+        updateString.append("stock:addedOn \""+sdf.format(new Date())+"\"^^xsd:dateTime;");
+        updateString.append("stock:hasEpcCode \""+epc+"\"^^xsd:string.");
         updateString.append("}");
         try {
             UpdateRequest update = UpdateFactory.create(updateString.toString());
@@ -77,7 +77,7 @@ public class StockRDFOperations {
         
         StringBuilder updateString = new StringBuilder(prefix);;
         updateString.append("INSERT DATA { ");
-        updateString.append(stockURI + " stock:removedOn \""+sdf.format(new Date())+"\"^^<http://www.w3.org/2001/XMLSchema#dateTime>.");
+        updateString.append(stockURI + " stock:removedOn \""+sdf.format(new Date())+"\"^^xsd:dateTime.");
         updateString.append("}");
         
         try {
@@ -98,8 +98,8 @@ public class StockRDFOperations {
         
         StringBuilder updateString = new StringBuilder(prefix);
         updateString.append("INSERT DATA { ");
-        updateString.append(stockURI + " stock:soldTo \""+customerName+"\"^^<http://www.w3.org/2001/XMLSchema#string>; ");
-        updateString.append(" stock:soldOn \""+sdf.format(new Date())+"\"^^<http://www.w3.org/2001/XMLSchema#dateTime>.");
+        updateString.append(stockURI + " stock:soldTo \""+customerName+"\"^^xsd:string ; ");
+        updateString.append(" stock:soldOn \""+sdf.format(new Date())+"\"^^xsd:dateTime .");
         updateString.append("}");
         
         try {
@@ -121,7 +121,7 @@ public class StockRDFOperations {
 
         String queryString = prefix +
             "SELECT ?s WHERE { " 
-            + " ?s  stock:soldTo \""+customerName+"\"^^<http://www.w3.org/2001/XMLSchema#string> . "
+            + " ?s  stock:soldTo \""+customerName+"\"^^xsd:string . "
             + "} ";
 
         try {
@@ -185,8 +185,8 @@ public class StockRDFOperations {
 
         log.warn("Entering StockRDFOperations.getStockDetailsForEpc");
         Model m = ModelFactory.createDefaultModel();
-        Literal literal= m.createLiteral("\""+epc+"\"^^<http://www.w3.org/2001/XMLSchema#string>");
-        List<Stock> stockSet = getStockForProperty("hasEpcCode",literal );
+        Literal literal= m.createLiteral("\""+epc+"\"^^xsd:string");
+        List<Stock> stockSet = getStockForProperty("stock:hasEpcCode",literal );
         if(!stockSet.isEmpty())
             return stockSet.get(0);
         else
@@ -201,15 +201,15 @@ public class StockRDFOperations {
         String queryString = prefix
             + "SELECT ?stock ?prop ?val " 
             + "WHERE { "
-            + "    ?stock ?prop ?val ."
-            + "    ?stock stock:" + property + " " + value + " ." 
+            + "    ?stock ?prop ?val ;"
+            + "    " + property + " " + value + " ." 
             + "}";
 
         try{
             Query query = QueryFactory.create(queryString);
             QueryEngineHTTP exec = (QueryEngineHTTP)QueryExecutionFactory.sparqlService(serviceUrl, query);
             exec.setBasicAuthentication(USERNAME, PASSWORD.toCharArray());
-            ResultSet rs = exec.execSelect();
+           ResultSet rs = exec.execSelect();
             stock = new Stock();
             String prevObj = "";
             String newObj = "";
@@ -226,7 +226,15 @@ public class StockRDFOperations {
 
                 prevObj = newObj;
 
-                if ("soldOn".equals(sol.get("prop").asResource().getLocalName())) {
+                if ("addedOn".equals(sol.get("prop").asResource().getLocalName())) {
+                    try {
+                        stock.setAddedOn(sdf.parse(sol.get("val").asLiteral().getString()));
+                    } catch (ParseException e) {
+                    }
+                }
+                else if ("hasEpcCode".equals(sol.get("prop").asResource().getLocalName())) {
+                    stock.setEpc(sol.get("val").asLiteral().getString());
+                }else if ("soldOn".equals(sol.get("prop").asResource().getLocalName())) {
                     try {
                         stock.setSold(true);
                         stock.setSoldOn(sdf.parse(sol.get("val").asLiteral().getString()));
@@ -236,14 +244,8 @@ public class StockRDFOperations {
                 else if ("soldTo".equals(sol.get("prop").asResource().getLocalName())) {
                     stock.setSoldTo(sol.get("val").asLiteral().getString());
                 }
-                else if ("addedOn".equals(sol.get("prop").asResource().getLocalName())) {
-                    try {
-                        stock.setAddedOn(sdf.parse(sol.get("val").asLiteral().getString()));
-                    } catch (ParseException e) {
-                    }
-                }
-                else if ("hasEpcCode".equals(sol.get("prop").asResource().getLocalName())) {
-                    stock.setEpc(sol.get("val").asLiteral().getString());
+                else if ("removedOn".equals(sol.get("prop").asResource().getLocalName())) {
+                    stock.setRemovedOn(sdf.parse(sol.get("val").asLiteral().getString()));
                 }
                 addLastObj = true;   
             }
