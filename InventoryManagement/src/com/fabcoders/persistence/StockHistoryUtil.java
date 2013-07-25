@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.fabcoders.config.ConfigManager;
+import com.fabcoders.domain.Product;
 import com.fabcoders.domain.StockHistoryEvent;
 import com.fabcoders.exception.InventoryManagementException;
 
@@ -48,12 +49,19 @@ public class StockHistoryUtil {
             String[] dataArray;
             StockHistoryEvent stock;
             while((line = reader.readLine())!= null){
-                stock = new StockHistoryEvent();
-                dataArray = line.split(":");
-                stock.setProduct(ProductRDFOperations.getItemForEPC(dataArray[0]));
-                stock.setOperation(dataArray[1]);
-                stock.setOperationOn(new Date(Long.parseLong(dataArray[2])));
-                stockList.add(stock);     
+                try {
+                    stock = new StockHistoryEvent();
+                    dataArray = line.split(":");
+                    Product product = ProductRDFOperations.getItemForEPC(dataArray[0]);
+                    if(null != product){
+                        stock.setProduct(product);
+                        stock.setOperation(dataArray[1]);
+                        stock.setOperationOn(new Date(Long.parseLong(dataArray[2])));
+                        stockList.add(stock);    
+                    }
+                } catch (NumberFormatException e) {
+                } catch (NullPointerException e) {
+                }
             }
             reader.close();
         } catch (FileNotFoundException e) {
