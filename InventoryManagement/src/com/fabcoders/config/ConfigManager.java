@@ -1,11 +1,9 @@
 /*
  * Developed by Fabcoders 
- * 
  * Version 0.1
  */
 package com.fabcoders.config;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -28,12 +26,6 @@ public final class ConfigManager {
     private static Properties configProp = new Properties();
     
     /**
-     * private constructor for unnecessary instantiation
-     */
-    public ConfigManager(){
-    }
-    
-    /**
      * static block to initialize configuration on class load 
      */
     static {
@@ -48,8 +40,8 @@ public final class ConfigManager {
     /**
      * Configurations to initialized
      */
-    public static String IMAGE_LOCATION;
-    public static String MOVEMENT_HOMEPLACE;
+    public static String IMAGE_ACCESS_PATH;
+    public static String IMAGE_UPLOAD_PATH;
     public static String HISTORY_LOG_FILE;
     public static String[] ITEMGROUPS;
     public static String[] COLLECTIONS;
@@ -68,13 +60,14 @@ public final class ConfigManager {
         
         // check configuration from application.properties
         try {
-            IMAGE_LOCATION = configProp.getProperty("image.location");
+
+            IMAGE_ACCESS_PATH = configProp.getProperty("image.access.path");
+            IMAGE_UPLOAD_PATH = configProp.getProperty("image.upload.path");
             ITEMGROUPS = configProp.getProperty("type.itemgroups","").split(":");
             COLLECTIONS = configProp.getProperty("type.collections","").split(":");
             COLORS = configProp.getProperty("type.colors","").split(":");
             SIZE = configProp.getProperty("type.size","").split(":");
             GENDER = configProp.getProperty("type.gender","").split(":");
-            MOVEMENT_HOMEPLACE = configProp.getProperty("movement.homeplace");
             HISTORY_LOG_FILE = configProp.getProperty("history.log.file");
             PRODUCT_SPARQL_URL = configProp.getProperty("product.sparql.endpoint.url");
             STOCK_SPARQL_URL = configProp.getProperty("stock.sparql.endpoint.url");
@@ -92,6 +85,7 @@ public final class ConfigManager {
             JOptionPane.showMessageDialog(null, "Please check if EpcDll.dll exists in folder.");
             System.exit(1);
         }
+        
         // check if history log file exists
         try {
             new StockHistoryUtil();
@@ -100,7 +94,7 @@ public final class ConfigManager {
             System.exit(1);
         }
 
-        // check if dataset file exists
+        // check if URL to product end point is accessible
         try {
             URL url = new URL(PRODUCT_SPARQL_URL);
             HttpURLConnection httpConn =  (HttpURLConnection)url.openConnection();
@@ -112,6 +106,8 @@ public final class ConfigManager {
             JOptionPane.showMessageDialog(null, "Product Endpoint is not connected");
             System.exit(1);
         }
+    
+        // check if URL to company inventory end point is accessible
         try {
 
             URL url = new URL(STOCK_SPARQL_URL);
@@ -124,11 +120,18 @@ public final class ConfigManager {
             JOptionPane.showMessageDialog(null, "Stock Endpoint is not connected");
             System.exit(1);
         }
+        
+        // check is path to upload images is accessible
+        try {
 
-        // check if file to upload images exist
-        File f = new File(IMAGE_LOCATION);
-        if (!f.exists()) {
-            JOptionPane.showMessageDialog(null, "Image upload Path does not exist");
+            URL url = new URL(IMAGE_UPLOAD_PATH);
+            HttpURLConnection httpConn =  (HttpURLConnection)url.openConnection();
+            httpConn.setInstanceFollowRedirects( false );
+            httpConn.setRequestMethod( "HEAD" ); 
+            httpConn.connect();
+            httpConn.disconnect();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Image upload path is not connected");
             System.exit(1);
         }
     } 

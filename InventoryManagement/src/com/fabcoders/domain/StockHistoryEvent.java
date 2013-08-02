@@ -1,3 +1,7 @@
+/*
+ * Developed by Fabcoders 
+ * Version 0.1
+ */
 package com.fabcoders.domain;
 
 import java.util.Date;
@@ -82,6 +86,14 @@ public class StockHistoryEvent {
     public void setOperationOn(Date operationOn) {
         this.operationOn = operationOn;
     }
-    
-    
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "StockHistoryEvent [epc=" + epc + ", operation=" + operation
+                + ", operationOn=" + operationOn + "]";
+    }
+
 }

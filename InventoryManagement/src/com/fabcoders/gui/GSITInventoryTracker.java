@@ -12,6 +12,8 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,7 +43,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.logging.Log;
@@ -71,7 +72,7 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
 
     private static final int FETCH_INTERVAL = 1000;
     
-    private BufferedImage addImage = null;
+    private File productImageFile = null;
 
     /**
      * Logger for LLRPInventoryTracker
@@ -145,7 +146,7 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
     private javax.swing.JButton jButton9;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JComboBox jComboBox10;
-    private javax.swing.JComboBox jComboBox12;
+   // private javax.swing.JComboBox jComboBox12;
     private javax.swing.JComboBox jComboBox2;
     private javax.swing.JComboBox jComboBox3;
     private javax.swing.JComboBox jComboBox4;
@@ -311,7 +312,7 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
         jComboBox6 = new javax.swing.JComboBox();
         jTextField5 = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jComboBox12 = new javax.swing.JComboBox();
+       // jComboBox12 = new javax.swing.JComboBox();
         jTextField4 = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel4 = new javax.swing.JPanel();
@@ -367,6 +368,14 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
         jLabel42 = new javax.swing.JLabel();
         jScrollPane14 = new javax.swing.JScrollPane();
         jTable7 = new javax.swing.JTable();
+
+        // Set the window's bounds, centering the window
+        int width = 1144;
+        int height = 650;
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (screen.width - width) / 2;
+        int y = (screen.height - height) / 2;
+        setBounds(x, y, width, height);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(APP_NAME);
@@ -620,10 +629,10 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                 jButton4KeyPressed(evt);
             }
         });
-        
+
         jLabel11.setText("Description :");
 
-        jButton7.setText("Upload Picture");
+        jButton7.setText("Browse Picture");
         jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton7MouseClicked(evt);
@@ -643,8 +652,6 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
 
         jLabel4.setText("Item Name :");
 
-        jLabel5.setText("EPC :");
-
         jLabel6.setText("ItemGroup :");
 
         jLabel7.setText("Collection :");
@@ -657,32 +664,34 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
 
         jLabel14.setText("Photo :");
 
+        jLabel5.setText("EPC :");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(224, 224, 224)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(41, 41, 41)
                         .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(35, 35, 35)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel6)
+                            .addComponent(jLabel3)
                             .addComponent(jLabel8)
                             .addComponent(jLabel11)
-                            .addComponent(jLabel3)
                             .addComponent(jLabel5))
                         .addGap(30, 30, 30)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
                             .addComponent(jComboBox2, 0, 162, Short.MAX_VALUE)
                             .addComponent(jComboBox4, 0, 162, Short.MAX_VALUE)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                            .addComponent(jTextField5)
+                            .addComponent(jTextField2)
                             .addComponent(jTextField4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -692,17 +701,18 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                             .addComponent(jLabel10))
                         .addGap(30, 30, 30)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)))
-                .addComponent(jLabel14)
-                .addGap(10, 10, 10)
+                            .addComponent(jComboBox3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jComboBox6, 0, 162, Short.MAX_VALUE)
+                                .addComponent(jTextField3)
+                                .addComponent(jComboBox5, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+                        .addComponent(jLabel14)
+                        .addGap(10, 10, 10)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(91, Short.MAX_VALUE))
+                    .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(58, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -710,12 +720,15 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                 .addGap(100, 100, 100)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel3)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel4))
+                        .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel3)
                             .addComponent(jLabel14))
                         .addGap(24, 24, 24)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -725,29 +738,25 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                             .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(24, 24, 24)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel8)
                             .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9))
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel10)
+                            .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(27, 27, 27)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel10)
+                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel9)
+                            .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel11)
                             .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(30, 30, 30)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5))
-                        .addGap(30, 30, 30)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(154, Short.MAX_VALUE))
+                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(146, Short.MAX_VALUE))
         );
 
         jScrollPane7.setViewportView(jPanel1);
@@ -1236,6 +1245,7 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                 timer2ActionPerformed(evt);
             }
         });
+        
         pack();
     }
     private void page1Int() {
@@ -1268,9 +1278,9 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
     private void loadPreviousProducts() {
         log.debug("Loading previously available stock");
         try {
-            Set<String> taglist = StockRDFOperations.getTagsInStock(); 
+            Set<String> taglist = StockRDFOperations.getStockPresent(); 
             for (String epc : taglist) {
-                Product item = ProductRDFOperations.getItemForEPC(epc);
+                Product item = ProductRDFOperations.getForEPC(epc);
                 
                 if(null != item){
                     itemsInStock.add(epc);
@@ -1336,13 +1346,13 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                 jComboBox6.insertItemAt(item, i++);
             }
         }
-        loadProductIds();
+       // loadProductIds();
     }
 
     /**
      * 
      */
-    private void loadProductIds() {
+   /* private void loadProductIds() {
         try {
             List<Product> items = ProductRDFOperations.getAllProducts();
             jComboBox12.removeAllItems();
@@ -1356,7 +1366,7 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
         } catch (InventoryManagementException e) {
             logMessage(e.getMessage());
         }
-    }
+    }*/
     
     /**
      * Loads elements in page3. this method loads previous transaction history
@@ -1466,23 +1476,24 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                 ext = s.substring(i + 1).toLowerCase();
             }
 
-            if ((ext.contentEquals("jpg")) || (ext.contentEquals("jpeg"))
-                    || (ext.contentEquals("tiff"))
-                    || (ext.contentEquals("gif"))
-                    || (ext.contentEquals("tif"))
-                    || (ext.contentEquals("png"))) {
+            if (ext.contentEquals("jpeg")) {
                 // to get the height and width of an image
-                
-                    ImageIcon image = new ImageIcon(file.getPath());
-                    jLabel12.setIcon(image);
-                    jLabel12.setText("");
-                    jLabel12.revalidate();
 
-                    addImage  = new BufferedImage(image.getIconWidth(),image.getIconHeight(),BufferedImage.TYPE_INT_RGB);
-                    image.paintIcon(null, addImage.getGraphics(), 0, 0);
+                ImageIcon image = new ImageIcon(file.getPath());
+                jLabel12.setIcon(image);
+                jLabel12.setText("");
+                jLabel12.revalidate();
+
+                /* addImage  = new BufferedImage(image.getIconWidth(),image.getIconHeight(),BufferedImage.TYPE_INT_RGB);
+                    image.paintIcon(null, addImage.getGraphics(), 0, 0);*/
+                productImageFile = file;
             } else {
-                    jLabel12.setText("Please Correct Image File");
+                productImageFile = null;
+                jLabel12.setText("Only image/jpeg type files are allowed");
+                jLabel12.setIcon(null);
+                jLabel12.revalidate();
             }
+            
         }
     }
 
@@ -1533,7 +1544,7 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
         jComboBox6.setSelectedIndex(-1);
         jLabel12.setText("No Picture Uploaded");
         jLabel12.setIcon(null);
-        addImage = null;
+        productImageFile = null;
     
     }
     
@@ -1593,9 +1604,9 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                         "Please Select Sex");
                 jComboBox6.requestFocus();
                 return;
-            }  else if (null == addImage) {
+            } else if (null == productImageFile) {
                 JOptionPane.showMessageDialog(this,
-                        "Please Upload the Product Image");
+                        "Please Browse the Product Image to Upload");
                 return;
             } else if (null == epc || "".equalsIgnoreCase(epc)) {
                 JOptionPane.showMessageDialog(this,
@@ -1607,15 +1618,15 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                 "EPC is a HexaDecimal Value Of 24 Length");
                 jTextField4.requestFocus();
                 return;
+            }else if (null == description || "".equalsIgnoreCase(description)) {
+                JOptionPane.showMessageDialog(this,
+                "Please Enter Product Description");
+                jTextField5.requestFocus();
+                return;
             }
             jButton3.setEnabled(false);
 
             try {
-                File outputFile = new File(ConfigManager.IMAGE_LOCATION
-                        + System.getProperty("file.separator") + itemNo + ".jpg");
-                log.debug("Uploading Image to : " + outputFile.getPath());
-
-                ImageIO.write(addImage, "JPG", outputFile);
                 Product product = new Product();
                 product.setCollection(collection);
                 product.setColor(color);
@@ -1626,16 +1637,16 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                 product.setSize(size);
                 product.setDescription(description);
                 product.setEpc(epc);
-                product.setImage(outputFile.getName());
+                product.setImage(ConfigManager.IMAGE_ACCESS_PATH + itemNo + ".jpeg");
                 ProductRDFOperations.create(product);
+
+                uploadProductImage(productImageFile, itemNo);
+                 
                 JOptionPane.showMessageDialog(this, "Added Product Successfully");
                 jButton4MouseClicked(null);
-                loadProductIds();
+               // loadProductIds();
             } catch (InventoryManagementException e) {
                 JOptionPane.showMessageDialog(this, "Failed to add Item: " + e.getMessage());
-                log.warn("Exception Occured while Associating product to Tagid", e);
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "Failed to upload image: " + e.getMessage());
                 log.warn("Exception Occured while Associating product to Tagid", e);
             }
 
@@ -1754,7 +1765,7 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
         if(shouldAdd){
 
             try {
-                Product item = ProductRDFOperations.getItemForEPC(stock.getEpc());
+                Product item = ProductRDFOperations.getForEPC(stock.getEpc());
 
                 model.addRow(new Object[] { item.getEpc(), item.getProductCode(),
                         item.getProductName(), stock.getSoldTo(), item.getProductGroup(), item.getCollection(),
@@ -1774,19 +1785,15 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
        
         model.getDataVector().removeAllElements();
         model.fireTableDataChanged();
-        Set<String> taglist = StockRDFOperations.getStockSoldTo(customerName);
+        List<Stock> stocklist = StockRDFOperations.getStockSoldTo(customerName);
         Product item;
-        Stock stock;
         try {
-            for (String tagId : taglist) {
-                item = ProductRDFOperations.getItemForEPC(tagId);
+            for (Stock stock : stocklist) {
+                item = ProductRDFOperations.getForEPC(stock.getEpc());
                 if(null != item){
-                    stock = StockRDFOperations.getStockDetailsForEpc(tagId);
-                    if(null != stock){
-                        model.addRow(new Object[] { item.getEpc(), item.getProductCode(),
-                                item.getProductName(), stock.getSoldTo(), item.getProductGroup(), item.getCollection(),
-                                item.getColor(), item.getSize(), item.getSex(), stock.getSoldOn()});    
-                    }
+                    model.addRow(new Object[] { item.getEpc(), item.getProductCode(),
+                            item.getProductName(), stock.getSoldTo(), item.getProductGroup(), item.getCollection(),
+                            item.getColor(), item.getSize(), item.getSex(), stock.getSoldOn()});    
                 }
             }
         } catch (InventoryManagementException e) {
@@ -1803,7 +1810,7 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
         if(rowNo != -1){
             String itemNo = jTable6.getValueAt(rowNo,1).toString();
             try {
-                BufferedImage image = ProductRDFOperations.getPictureforItemNo(itemNo);
+                BufferedImage image = getPictureforItemNo(itemNo);
                 int height = 230; 
                 int width = jPanel3.getWidth();
                 BufferedImage resizedImage = new BufferedImage(width,height, BufferedImage.TYPE_INT_RGB);
@@ -1811,9 +1818,13 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                 g.drawImage(image, 0, 0, width,height, null);
                 g.dispose();
                 jLabel13.setIcon(new ImageIcon(resizedImage));
+                jLabel13.setText("");
                 jLabel13.setVisible(true);
                 jLabel13.revalidate();
             } catch (InventoryManagementException e) {
+                jLabel13.setIcon(null);
+                jLabel13.setText("Image NOt Found");
+                jLabel13.revalidate();
                 logMessage("Failed to get Product Image");
                 log.warn("Failed to get Product Image",e);
             }
@@ -1890,8 +1901,8 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
         if(null != selectedValue){
             Product item;
             try {
-                item = ProductRDFOperations.getItemForEPC(selectedValue);
-                BufferedImage image = ProductRDFOperations.getPictureforItemNo(item.getProductCode());
+                item = ProductRDFOperations.getForEPC(selectedValue);
+                BufferedImage image = getPictureforItemNo(item.getProductCode());
                 BufferedImage resizedImage = new BufferedImage(jLabel23.getWidth(),jLabel23.getHeight(), BufferedImage.TYPE_INT_RGB);
                 Graphics2D g = resizedImage.createGraphics();
                 g.drawImage(image, 0, 0, jLabel23.getWidth(),jLabel23.getHeight(), null);
@@ -1948,12 +1959,13 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
         for (int i = 0; i < count; i++) {
             epcSet.add((String) listModel2.getElementAt(i));
         }
-        for (String epc :epcSet)
-        {
-            Product item;
-            try {
-                item = ProductRDFOperations.getItemForEPC(epc);
-                StockRDFOperations.setStockToSold(customerName, epc);
+        try {
+            String epcArray [] = epcSet.toArray(new String[0]);
+            StockRDFOperations.setStockToSold(customerName, epcArray);
+            
+            for (String epc :epcSet)
+            {
+                Product item = ProductRDFOperations.getForEPC(epc);
                 
                 // remove item from stock
                 itemsInStock.remove(epc);
@@ -1971,12 +1983,10 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                 StockHistoryUtil.addToHistoryLog(event);
                 addItemToJtable7(event);
                 itemName += item.getProductName()+ ", ";
-                
-            } catch (InventoryManagementException e) {
-                logMessage(e.getMessage());
             }
+        } catch (InventoryManagementException e) {
+            logMessage(e.getMessage());
         }
-        
         listModel2.removeAllElements();
         jTextField6.setText("");
         JOptionPane.showMessageDialog(this, "Item "+itemName+" sold to "+customerName);
@@ -2058,21 +2068,21 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
         JPanel content = (JPanel) window.getContentPane();
         content.setBackground(Color.white);
         // Set the window's bounds, centering the window
-        int width = 450;
-        int height = 115;
+        int width = 366;
+        int height = 160;
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (screen.width - width) / 2;
         int y = (screen.height - height) / 2;
         window.setBounds(x, y, width, height);
 
         // Build the splash screen
-        JLabel label = new JLabel(new ImageIcon("logo.gif"));
-        JLabel copyrt = new JLabel("today:" + new Date(),
+        JLabel label = new JLabel(new ImageIcon("logo.jpg"));
+        JLabel copyrt = new JLabel("Start Time : " + new Date(),
             JLabel.RIGHT);
-        copyrt.setFont(new Font("Sans-Serif", Font.BOLD, 12));
+        copyrt.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
         content.add(label, BorderLayout.CENTER);
         content.add(copyrt, BorderLayout.SOUTH);
-        content.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 10));
+        content.setBorder(BorderFactory.createLineBorder(new Color(210, 210, 210), 1));
 
         // Display it
         window.setVisible(true);
@@ -2172,20 +2182,21 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                 // getting and setting tagId, it contains HexaDecimal value
                 tagId = entry.getKey();
 
-                item = ProductRDFOperations.getItemForEPC(tagId);
+                item = ProductRDFOperations.getForEPC(tagId);
 
                 // in case of item not belong to our repository return
                 if(null == item){
                     continue;
                 }
+                
                 //add item to Inventory stock
                 if(antennaID == inAntenna){
                     isPresentInStock = itemsInStock.contains(tagId);
                     if(!isPresentInStock)
                     {
+                        StockRDFOperations.addToStock(tagId);
                         addItemToJtable6(item);
                         itemsInStock.add(tagId);
-                        StockRDFOperations.addToStock(tagId);
                         ((DefaultListModel)jList3.getModel()).addElement(tagId);
                         
                         // adding entry to history
@@ -2205,13 +2216,12 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                     if(isPresentInStock)
                     {
                         // remove from stock available
-                        removeFromJtable6(tagId);
                         StockRDFOperations.removeFromStock(tagId);
+                        removeFromJtable6(tagId);
                         itemsInStock.remove(tagId);
                         
                         // remove from items all the other places
                         removeFromOthrPlaces(tagId);
-                        
                         
                         // adding entry to history
                         StockHistoryEvent event = new StockHistoryEvent();
@@ -2240,7 +2250,7 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
                 }
                 // sale of inventory
                 else if(antennaID == salesAntenna){
-                    Stock stock = StockRDFOperations.getStockDetailsForEpc(tagId);
+                    Stock stock = StockRDFOperations.getForEpc(tagId);
                     if(stock.isSold()){
                         addToTable2(stock);
                     }else{
@@ -2340,5 +2350,33 @@ public class GSITInventoryTracker extends javax.swing.JFrame{
             } catch (InterruptedException e) { }
             
         }
+    }
+    
+    public BufferedImage getPictureforItemNo(String itemNo) throws InventoryManagementException {
+        
+        URL url;
+        try {
+            url = new URL(ConfigManager.IMAGE_ACCESS_PATH+itemNo+".jpeg");
+            BufferedImage bf = ImageIO.read(url);
+
+            return bf;
+        } catch (MalformedURLException e) {
+           throw new InventoryManagementException(e);
+        } catch (IOException e) {
+            throw new InventoryManagementException(e);
+        }
+    }
+    
+    public void uploadProductImage( File uploadFile, String productCode){
+
+        try {
+            MultipartUtility multipart = new MultipartUtility(ConfigManager.IMAGE_UPLOAD_PATH, "UTF-8");
+            multipart.addFormField("productCode", productCode);
+            multipart.addFilePart("fileUpload", uploadFile);
+            multipart.finish();
+        } catch (IOException ex) {
+            logMessage(ex.getMessage());
+        }
+    
     }
 }

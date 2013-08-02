@@ -1,7 +1,11 @@
 package com.fabcoders.reader.gsit;
 
 import java.net.URL;
-
+/**
+ * This class loads EpcDll.dll file into memory
+ * @author windows
+ *
+ */
 public class ReaderDllLoader {
 
     private static String epcDllPath ;

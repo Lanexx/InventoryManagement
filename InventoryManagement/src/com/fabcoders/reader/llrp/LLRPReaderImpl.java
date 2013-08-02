@@ -1,3 +1,7 @@
+/*
+ * Developed by Fabcoders 
+ * Version 0.1
+ */
 package com.fabcoders.reader.llrp;
 
 import java.rmi.RemoteException;
@@ -18,6 +22,10 @@ import org.llrp.ltk.types.LLRPMessage;
 import com.fabcoders.exception.InventoryManagementException;
 import com.fabcoders.gui.LLRPInventoryTracker;
 
+/**
+ * This class provides an interface to work with llrp reader 
+ *
+ */
 public class LLRPReaderImpl implements MessageHandler{
    
     private static AdaptorManagement mgnt;
@@ -39,11 +47,6 @@ public class LLRPReaderImpl implements MessageHandler{
                 throw new InventoryManagementException("Initialising Adaptor Failed", e);
             }
         }
-    }
-    public void startReadTag()throws InventoryManagementException {
-           }
-    
-    public void stopReadTag()throws InventoryManagementException {
     }
 
     public boolean disconnectReader()throws InventoryManagementException {

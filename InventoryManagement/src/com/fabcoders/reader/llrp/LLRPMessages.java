@@ -1,3 +1,7 @@
+/*
+ * Developed by Fabcoders 
+ * Version 0.1
+ */
 package com.fabcoders.reader.llrp;
 
 import java.util.ArrayList;
@@ -56,13 +60,18 @@ import org.llrp.ltk.types.UnsignedShortArray_HEX;
 
 import com.fabcoders.exception.InventoryManagementException;
 
+/**
+ * This class contains all the messages send to llrp reader
+ * @author windows
+ *
+ */
 public class LLRPMessages {
 
     
     private static Log log = LogFactory.getLog(LLRPMessages.class);
     private static int rospecId = 111;
     private static int accessSpecID = 222;
-    private static String TARGET_DATA = "3507478c95437cbfae90c11c";
+    private static String TARGET_DATA = "";
     private static String TAG_MASK =  "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF";
     /**
      * Add ROSpecs from the reader.
@@ -250,8 +259,9 @@ public class LLRPMessages {
     }
 
  // Add the AccessSpec to the reader.
-    public static byte[] addAccessSpec() throws InventoryManagementException {
+    public static byte[] addAccessSpec(String targetData) throws InventoryManagementException {
         log.debug("Adding AccessSpecs.");
+        TARGET_DATA = targetData;
         try {
             ADD_ACCESSSPEC msg = new ADD_ACCESSSPEC();
             msg.setAccessSpec( buildAccessSpec(accessSpecID));

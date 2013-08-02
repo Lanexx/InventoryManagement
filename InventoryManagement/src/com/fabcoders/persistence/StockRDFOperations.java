@@ -1,3 +1,7 @@
+/*
+ * Developed by Fabcoders 
+ * Version 0.1
+ */
 package com.fabcoders.persistence;
 
 import java.text.ParseException;
@@ -19,25 +23,25 @@ import com.hp.hpl.jena.query.QueryExecutionFactory;
 import com.hp.hpl.jena.query.QueryFactory;
 import com.hp.hpl.jena.query.QuerySolution;
 import com.hp.hpl.jena.query.ResultSet;
-import com.hp.hpl.jena.rdf.model.Literal;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
-import com.hp.hpl.jena.rdf.model.RDFNode;
-import com.hp.hpl.jena.rdf.model.impl.ResourceImpl;
 import com.hp.hpl.jena.sparql.engine.http.QueryEngineHTTP;
 import com.hp.hpl.jena.update.UpdateFactory;
 import com.hp.hpl.jena.update.UpdateRequest;
-
+/**
+ * This is performs all the operation relating persistence of inventory/ Stock related data 
+ * data is stored in RDF format and is accessible through SPARQL end point  
+ */
 public class StockRDFOperations {
 
     private static Log log = LogFactory.getLog(StockRDFOperations.class);
-    private static String serviceUrl = ConfigManager.STOCK_SPARQL_URL;
-
+    
+    private static String ENDPOINT_URL = ConfigManager.STOCK_SPARQL_URL;
     private static String USERNAME = ConfigManager.ENDPOINT_USERNAME;
     private static String PASSWORD = ConfigManager.ENDPOINT_PASSWORD;
     
-    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
+    // format for date storage
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssz");
 
+    // prefix for all queries
     private static final String prefix =
         "PREFIX gr: <http://purl.org/goodrelations/v1#> "
       + "PREFIX foaf: <http://xmlns.com/foaf/0.1/> "
@@ -46,9 +50,14 @@ public class StockRDFOperations {
       + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
       + "PREFIX stock: <http://www.example.com/stock-ns.rdf#> ";
     
-    public static int addToStock(String epc)throws InventoryManagementException {
-
-        log.warn("Entering StockRDFOperations.addToStock");
+    /**
+     * this method add stock information to the repository
+     * @param epc
+     * @return
+     * @throws InventoryManagementException
+     */
+    public static void addToStock(String epc)throws InventoryManagementException {
+        log.info("Entering StockRDFOperations.addToStock");
         String stockURI = "<http://localhost:8080/resource/stock/"+epc+">";
         
         StringBuilder updateString = new StringBuilder(prefix);
@@ -60,18 +69,23 @@ public class StockRDFOperations {
         updateString.append("}");
         try {
             UpdateRequest update = UpdateFactory.create(updateString.toString());
-            UpdateProcessRemote riStore = new UpdateProcessRemote(update, serviceUrl,null,null);
+            UpdateProcessRemote riStore = new UpdateProcessRemote(update, ENDPOINT_URL,null,null);
             riStore.setBasicAuthentication(USERNAME, PASSWORD);
             riStore.execute();
         } catch (Exception e) {
             log.error("Exception Occured while adding to Stock",e);
             throw new InventoryManagementException(e);
         }
-        return 1;
     }
 
+    /**
+     * This method sets stock removal information  
+     * @param epc
+     * @return
+     * @throws InventoryManagementException
+     */
     public static int removeFromStock(String epc)throws InventoryManagementException {
-        log.warn("Entering StockRDFOperations.removeFromStock");
+        log.info("Entering StockRDFOperations.removeFromStock");
 
         String stockURI = "<http://localhost:8080/resource/stock/"+epc+">";
         
@@ -82,7 +96,7 @@ public class StockRDFOperations {
         
         try {
             UpdateRequest update = UpdateFactory.create(updateString.toString());
-            UpdateProcessRemote riStore = new UpdateProcessRemote(update, serviceUrl,null,null);
+            UpdateProcessRemote riStore = new UpdateProcessRemote(update, ENDPOINT_URL,null,null);
             riStore.setBasicAuthentication(USERNAME, PASSWORD);
             riStore.execute();
         } catch (Exception e) {
@@ -92,60 +106,73 @@ public class StockRDFOperations {
         return 1;
     }
 
-    public static int setStockToSold (String customerName, String epc) throws InventoryManagementException {
-        log.warn("Entering StockRDFOperations.setStockToSold");
-        String stockURI = "<http://localhost:8080/resource/stock/"+epc+">";
+    /**
+     * This method mark stock to sold to customer
+     * @param customerName
+     * @param epc
+     * @return
+     * @throws InventoryManagementException
+     */
+    public static void setStockToSold (String customerName, String[] epcs) throws InventoryManagementException {
+        log.info("Entering StockRDFOperations.setStockToSold");
+        Date salesdate = new Date();
         
         StringBuilder updateString = new StringBuilder(prefix);
         updateString.append("INSERT DATA { ");
-        updateString.append(stockURI + " stock:soldTo \""+customerName+"\"^^xsd:string ; ");
-        updateString.append(" stock:soldOn \""+sdf.format(new Date())+"\"^^xsd:dateTime .");
+        for (String epc : epcs) {
+            updateString.append(" <http://localhost:8080/resource/stock/"+epc+"> stock:soldTo \""+customerName+"\"^^xsd:string ; ");
+            updateString.append(" stock:soldOn \""+sdf.format(salesdate)+"\"^^xsd:dateTime .");
+        }
         updateString.append("}");
         
         try {
             UpdateRequest update = UpdateFactory.create(updateString.toString());
-            UpdateProcessRemote riStore = new UpdateProcessRemote(update, serviceUrl,null,null);
+            UpdateProcessRemote riStore = new UpdateProcessRemote(update, ENDPOINT_URL,null,null);
             riStore.setBasicAuthentication(USERNAME, PASSWORD);
             riStore.execute();
         } catch (Exception e) {
             log.error("Exception Occured while selling item",e);
             throw new InventoryManagementException(e);
         }
-        return 1;
 
     }
 
-    public static Set<String> getStockSoldTo(String customerName){
-        log.warn("Entering StockRDFOperations.getStockSoldTo");
-        Set<String> itemsSold = new HashSet<String>();
+    /**
+     * returns list of stock items sold to customer in parameter
+     * @param customerName
+     * @return
+     */
+    public static List<Stock> getStockSoldTo(String customerName){
+        log.info("Entering StockRDFOperations.getStockSoldTo");
 
         String queryString = prefix +
-            "SELECT ?s WHERE { " 
-            + " ?s  stock:soldTo \""+customerName+"\"^^xsd:string . "
+            "SELECT ?stock ?prop ?val " 
+            + " WHERE { " 
+            + "    ?stock ?prop ?val ;"
+            + "     stock:soldTo \""+customerName+"\"^^xsd:string . "
             + "} ";
 
         try {
             Query query = QueryFactory.create(queryString);
-            QueryEngineHTTP exec = (QueryEngineHTTP)QueryExecutionFactory.sparqlService(serviceUrl, query);
+            QueryEngineHTTP exec = (QueryEngineHTTP)QueryExecutionFactory.sparqlService(ENDPOINT_URL, query);
             exec.setBasicAuthentication(USERNAME, PASSWORD.toCharArray());
             ResultSet rs = exec.execSelect();
-            while(rs.hasNext()){
-                QuerySolution sol = rs.nextSolution();
-                if(sol.get("s").isResource()){
-                    StringBuffer strbuf = new StringBuffer(sol.get("s").asResource().getURI());
-                    itemsSold.add(strbuf.substring(strbuf.lastIndexOf("/")+1, strbuf.length()));
-                }
-            }
+            List<Stock> stockSet = extractStockFromResultSet(rs);
             exec.close();
+            return stockSet;
         } catch (Exception e) {
             log.error("Exception Occured while getting sold stock",e);
+            return null;
         }
-        return itemsSold;
     }
 
-    public static Set<String> getTagsInStock() {
+    /**
+     * this method returns stock/inventory available with company  
+     * @return
+     */
+    public static Set<String> getStockPresent() {
 
-        log.warn("Entering StockRDFOperations.getTagsInStock");
+        log.info("Entering StockRDFOperations.getStockPresent");
         Set<String> taglist = new HashSet<String>();
 
         String queryString = prefix +
@@ -159,7 +186,7 @@ public class StockRDFOperations {
 
         try {
             Query query = QueryFactory.create(queryString);
-            QueryEngineHTTP exec = (QueryEngineHTTP)QueryExecutionFactory.sparqlService(serviceUrl, query);
+            QueryEngineHTTP exec = (QueryEngineHTTP)QueryExecutionFactory.sparqlService(ENDPOINT_URL, query);
             exec.setBasicAuthentication(USERNAME, PASSWORD.toCharArray());
             ResultSet rs = exec.execSelect();
             while(rs.hasNext()){
@@ -175,28 +202,32 @@ public class StockRDFOperations {
         return taglist;
     }
 
-    public static List<Stock> getStockOfProductType(String productid)throws InventoryManagementException {
-        log.warn("Entering StockRDFOperations.getStockOfProductType");
-        List<Stock> stockSet = getStockForProperty("itemType", new ResourceImpl("<http://localhost:3030/resource/product/"+productid+">"));
-        return stockSet;
-    }
+    /**
+     * return stock information for Epc value
+     * @param epc
+     * @return
+     * @throws InventoryManagementException
+     */
+    public static Stock getForEpc(String epc)throws InventoryManagementException {
 
-    public static Stock getStockDetailsForEpc(String epc)throws InventoryManagementException {
-
-        log.warn("Entering StockRDFOperations.getStockDetailsForEpc");
-        Model m = ModelFactory.createDefaultModel();
-        Literal literal= m.createLiteral("\""+epc+"\"^^xsd:string");
-        List<Stock> stockSet = getStockForProperty("stock:hasEpcCode",literal );
+        log.info("Entering StockRDFOperations.getForEpc");
+        String value = "\""+epc+"\"^^xsd:string";
+        List<Stock> stockSet = getForProperty("stock:hasEpcCode",value );
         if(!stockSet.isEmpty())
             return stockSet.get(0);
         else
             return null;
     }
 
-    private static List<Stock> getStockForProperty(String property, RDFNode value) throws InventoryManagementException {
-        log.warn("Entering StockRDFOperations.getStockForProperty");
-        List<Stock> stockSet = new ArrayList<Stock>();
-        Stock stock;
+    /**
+     * return stock information for property and value
+     * @param property
+     * @param value
+     * @return
+     * @throws InventoryManagementException
+     */
+    private static List<Stock> getForProperty(String property, String value) throws InventoryManagementException {
+        log.warn("Entering StockRDFOperations.getForProperty");
 
         String queryString = prefix
             + "SELECT ?stock ?prop ?val " 
@@ -207,56 +238,69 @@ public class StockRDFOperations {
 
         try{
             Query query = QueryFactory.create(queryString);
-            QueryEngineHTTP exec = (QueryEngineHTTP)QueryExecutionFactory.sparqlService(serviceUrl, query);
+            QueryEngineHTTP exec = (QueryEngineHTTP)QueryExecutionFactory.sparqlService(ENDPOINT_URL, query);
             exec.setBasicAuthentication(USERNAME, PASSWORD.toCharArray());
            ResultSet rs = exec.execSelect();
-            stock = new Stock();
-            String prevObj = "";
-            String newObj = "";
-            boolean addLastObj = false;
-            while (rs.hasNext()) 
-            {
-                QuerySolution sol = rs.nextSolution();
-                newObj = sol.get("stock").asResource().getURI();
-
-                if (!"".equals(prevObj) && !prevObj.equals(newObj)) {
-                    stockSet.add(stock);
-                    stock = new Stock();
-                }
-
-                prevObj = newObj;
-
-                if ("addedOn".equals(sol.get("prop").asResource().getLocalName())) {
-                    try {
-                        stock.setAddedOn(sdf.parse(sol.get("val").asLiteral().getString()));
-                    } catch (ParseException e) {
-                    }
-                }
-                else if ("hasEpcCode".equals(sol.get("prop").asResource().getLocalName())) {
-                    stock.setEpc(sol.get("val").asLiteral().getString());
-                }else if ("soldOn".equals(sol.get("prop").asResource().getLocalName())) {
-                    try {
-                        stock.setSold(true);
-                        stock.setSoldOn(sdf.parse(sol.get("val").asLiteral().getString()));
-                    } catch (ParseException e) {
-                    }
-                }
-                else if ("soldTo".equals(sol.get("prop").asResource().getLocalName())) {
-                    stock.setSoldTo(sol.get("val").asLiteral().getString());
-                }
-                else if ("removedOn".equals(sol.get("prop").asResource().getLocalName())) {
-                    stock.setRemovedOn(sdf.parse(sol.get("val").asLiteral().getString()));
-                }
-                addLastObj = true;   
-            }
-            if(addLastObj)
-                stockSet.add(stock);
-
+           List<Stock> stockSet = extractStockFromResultSet(rs);
             exec.close();
+            return stockSet;
         } catch (Exception e) {
             log.error("Exception Occured while getting details",e);
             throw new InventoryManagementException(e);
         }
+    }
+
+    /**
+     * @param stockSet
+     * @param rs
+     * @throws ParseException
+     */
+    private static List<Stock> extractStockFromResultSet(ResultSet rs)
+            throws ParseException {
+        List<Stock> stockSet = new ArrayList<Stock>();
+        
+        Stock stock;
+        stock = new Stock();
+        String prevObj = "";
+        String newObj = "";
+        boolean addLastObj = false;
+        while (rs.hasNext()) 
+        {
+            QuerySolution sol = rs.nextSolution();
+            newObj = sol.get("stock").asResource().getURI();
+
+            if (!"".equals(prevObj) && !prevObj.equals(newObj)) {
+                stockSet.add(stock);
+                stock = new Stock();
+            }
+
+            prevObj = newObj;
+
+            if ("addedOn".equals(sol.get("prop").asResource().getLocalName())) {
+                try {
+                    stock.setAddedOn(sdf.parse(sol.get("val").asLiteral().getString()));
+                } catch (ParseException e) {
+                }
+            }
+            else if ("hasEpcCode".equals(sol.get("prop").asResource().getLocalName())) {
+                stock.setEpc(sol.get("val").asLiteral().getString());
+            }else if ("soldOn".equals(sol.get("prop").asResource().getLocalName())) {
+                try {
+                    stock.setSold(true);
+                    stock.setSoldOn(sdf.parse(sol.get("val").asLiteral().getString()));
+                } catch (ParseException e) {
+                }
+            }
+            else if ("soldTo".equals(sol.get("prop").asResource().getLocalName())) {
+                stock.setSoldTo(sol.get("val").asLiteral().getString());
+            }
+            else if ("removedOn".equals(sol.get("prop").asResource().getLocalName())) {
+                stock.setRemovedOn(sdf.parse(sol.get("val").asLiteral().getString()));
+            }
+            addLastObj = true;   
+        }
+        if(addLastObj)
+            stockSet.add(stock);
         return stockSet;
     }
 }

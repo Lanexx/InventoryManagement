@@ -1,19 +1,34 @@
+/*
+ * Developed by Fabcoders 
+ * Version 0.1
+ */
 package com.fabcoders.domain;
 
+import java.io.Serializable;
 import java.util.Date;
+/**
+ * This class is Object class representing stock /company inventory   
+ */
+public class Stock implements Comparable<Stock> , Serializable{
 
-public class Stock implements Comparable<Stock>{
+    private static final long serialVersionUID = -8559055835666971136L;
 
+    // Epc Code for reference
     private String epc;
-    
+
+    // date when item added to inventory
     private Date addedOn;
-    
+
+    // date when item removed from inventory
     private Date removedOn;
-    
+
+    // boolean to check if item is sold
     private boolean sold;
     
+    // name to whom the item is sold
     private String soldTo;
     
+    // date when item sold to customer
     private Date soldOn;
 
     /**

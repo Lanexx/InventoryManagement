@@ -6,12 +6,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
- * 
- */
-
-/**
- * @author Administrator
- *
+ * This are the function allowed from EPCDll.dll file
  */
 public interface EPCLibrary extends Library {
     

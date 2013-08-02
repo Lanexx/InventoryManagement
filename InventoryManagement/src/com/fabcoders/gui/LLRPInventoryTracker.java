@@ -11,6 +11,8 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,7 +42,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.logging.Log;
@@ -82,7 +83,7 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
     
     private static final String APP_NAME = "Inventory Management";
     
-    private BufferedImage addImage = null;
+    private File productImageFile = null;
 
     /**
      * Logger for LLRPInventoryTracker
@@ -381,6 +382,14 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
         jScrollPane14 = new javax.swing.JScrollPane();
         jTable7 = new javax.swing.JTable();
 
+        // Set the window's bounds, centering the window
+        int width = 1144;
+        int height = 650;
+        Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+        int x = (screen.width - width) / 2;
+        int y = (screen.height - height) / 2;
+        setBounds(x, y, width, height);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle(APP_NAME);
         setResizable(false);
@@ -671,7 +680,7 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
 
         jLabel11.setText("Description :");
 
-        jButton7.setText("Upload Picture");
+        jButton7.setText("Browse Picture");
         jButton7.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jButton7MouseClicked(evt);
@@ -779,18 +788,18 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel8)
-                            .addComponent(jLabel9)
+                            .addComponent(jLabel10)
                             .addComponent(jComboBox6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(27, 27, 27)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel11)
-                            .addComponent(jLabel10)
+                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel9)
                             .addComponent(jComboBox5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(30, 30, 30)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel11)
+                            .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(30, 30, 30)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1288,9 +1297,9 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
     private void loadPreviousProducts() {
         log.debug("Loading previously available stock");
         try {
-            Set<String> taglist = StockRDFOperations.getTagsInStock(); 
+            Set<String> taglist = StockRDFOperations.getStockPresent(); 
             for (String epc : taglist) {
-                Product item = ProductRDFOperations.getItemForEPC(epc);
+                Product item = ProductRDFOperations.getForEPC(epc);
                 
                 if(null != item){
                     itemsInStock.add(epc);
@@ -1488,23 +1497,24 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                 ext = s.substring(i + 1).toLowerCase();
             }
 
-            if ((ext.contentEquals("jpg")) || (ext.contentEquals("jpeg"))
-                    || (ext.contentEquals("tiff"))
-                    || (ext.contentEquals("gif"))
-                    || (ext.contentEquals("tif"))
-                    || (ext.contentEquals("png"))) {
+            if (ext.contentEquals("jpeg")) {
                 // to get the height and width of an image
-                
-                    ImageIcon image = new ImageIcon(file.getPath());
-                    jLabel12.setIcon(image);
-                    jLabel12.setText("");
-                    jLabel12.revalidate();
 
-                    addImage  = new BufferedImage(image.getIconWidth(),image.getIconHeight(),BufferedImage.TYPE_INT_RGB);
-                    image.paintIcon(null, addImage.getGraphics(), 0, 0);
+                ImageIcon image = new ImageIcon(file.getPath());
+                jLabel12.setIcon(image);
+                jLabel12.setText("");
+                jLabel12.revalidate();
+
+                /* addImage  = new BufferedImage(image.getIconWidth(),image.getIconHeight(),BufferedImage.TYPE_INT_RGB);
+                    image.paintIcon(null, addImage.getGraphics(), 0, 0);*/
+                productImageFile = file;
             } else {
-                    jLabel12.setText("Please Correct Image File");
+                productImageFile = null;
+                jLabel12.setText("Only image/jpeg type files are allowed");
+                jLabel12.setIcon(null);
+                jLabel12.revalidate();
             }
+            
         }
     }
 
@@ -1538,7 +1548,6 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
         }
     }
 
-    
     /**
      * This method resets the associate form
      * @param evt
@@ -1556,7 +1565,7 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
         jComboBox6.setSelectedIndex(-1);
         jLabel12.setText("No Picture Uploaded");
         jLabel12.setIcon(null);
-        addImage = null;
+        productImageFile = null;
     
     }
     
@@ -1616,9 +1625,9 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                         "Please Select Sex");
                 jComboBox6.requestFocus();
                 return;
-            } else if (null == addImage) {
+            } else if (null == productImageFile) {
                 JOptionPane.showMessageDialog(this,
-                        "Please Upload the Product Image");
+                        "Please Browse the Product Image to Upload");
                 return;
             } else if (null == epc || "".equalsIgnoreCase(epc)) {
                 JOptionPane.showMessageDialog(this,
@@ -1630,15 +1639,15 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                 "EPC is a HexaDecimal Value Of 24 Length");
                 jTextField4.requestFocus();
                 return;
+            }else if (null == description || "".equalsIgnoreCase(description)) {
+                JOptionPane.showMessageDialog(this,
+                "Please Enter Product Description");
+                jTextField5.requestFocus();
+                return;
             }
             jButton3.setEnabled(false);
 
             try {
-                File outputFile = new File(ConfigManager.IMAGE_LOCATION
-                        + System.getProperty("file.separator") + itemNo + ".jpg");
-                log.debug("Uploading Image to : " + outputFile.getPath());
-
-                ImageIO.write(addImage, "JPG", outputFile);
                 Product product = new Product();
                 product.setCollection(collection);
                 product.setColor(color);
@@ -1649,16 +1658,16 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                 product.setSize(size);
                 product.setDescription(description);
                 product.setEpc(epc);
-                product.setImage(outputFile.getName());
+                product.setImage(ConfigManager.IMAGE_ACCESS_PATH + itemNo + ".jpeg");
                 ProductRDFOperations.create(product);
+
+                uploadProductImage(productImageFile, itemNo);
+                 
                 JOptionPane.showMessageDialog(this, "Added Product Successfully");
                 jButton4MouseClicked(null);
                // loadProductIds();
             } catch (InventoryManagementException e) {
                 JOptionPane.showMessageDialog(this, "Failed to add Item: " + e.getMessage());
-                log.warn("Exception Occured while Associating product to Tagid", e);
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "Failed to upload image: " + e.getMessage());
                 log.warn("Exception Occured while Associating product to Tagid", e);
             }
 
@@ -1811,7 +1820,7 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
         if(shouldAdd){
 
             try {
-                Product item = ProductRDFOperations.getItemForEPC(stock.getEpc());
+                Product item = ProductRDFOperations.getForEPC(stock.getEpc());
 
                 model.addRow(new Object[] { item.getEpc(), item.getProductCode(),
                         item.getProductName(), stock.getSoldTo(), item.getProductGroup(), item.getCollection(),
@@ -1831,19 +1840,15 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
        
         model.getDataVector().removeAllElements();
         model.fireTableDataChanged();
-        Set<String> taglist = StockRDFOperations.getStockSoldTo(customerName);
+        List<Stock> stocklist = StockRDFOperations.getStockSoldTo(customerName);
         Product item;
-        Stock stock;
         try {
-            for (String tagId : taglist) {
-                item = ProductRDFOperations.getItemForEPC(tagId);
+            for (Stock stock : stocklist) {
+                item = ProductRDFOperations.getForEPC(stock.getEpc());
                 if(null != item){
-                    stock = StockRDFOperations.getStockDetailsForEpc(tagId);
-                    if(null != stock){
-                        model.addRow(new Object[] { item.getEpc(), item.getProductCode(),
-                                item.getProductName(), stock.getSoldTo(), item.getProductGroup(), item.getCollection(),
-                                item.getColor(), item.getSize(), item.getSex(), stock.getSoldOn()});    
-                    }
+                    model.addRow(new Object[] { item.getEpc(), item.getProductCode(),
+                            item.getProductName(), stock.getSoldTo(), item.getProductGroup(), item.getCollection(),
+                            item.getColor(), item.getSize(), item.getSex(), stock.getSoldOn()});    
                 }
             }
         } catch (InventoryManagementException e) {
@@ -1860,7 +1865,7 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
         if(rowNo != -1){
             String itemNo = jTable6.getValueAt(rowNo,1).toString();
             try {
-                BufferedImage image = ProductRDFOperations.getPictureforItemNo(itemNo);
+                BufferedImage image = getPictureforItemNo(itemNo);
                 int height = 230; 
                 int width = jPanel3.getWidth();
                 BufferedImage resizedImage = new BufferedImage(width,height, BufferedImage.TYPE_INT_RGB);
@@ -1868,9 +1873,13 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                 g.drawImage(image, 0, 0, width,height, null);
                 g.dispose();
                 jLabel13.setIcon(new ImageIcon(resizedImage));
+                jLabel13.setText("");
                 jLabel13.setVisible(true);
                 jLabel13.revalidate();
             } catch (InventoryManagementException e) {
+                jLabel13.setIcon(null);
+                jLabel13.setText("Image NOt Found");
+                jLabel13.revalidate();
                 logMessage("Failed to get Product Image");
                 log.warn("Failed to get Product Image",e);
             }
@@ -1947,8 +1956,8 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
         if(null != selectedValue){
             Product item;
             try {
-                item = ProductRDFOperations.getItemForEPC(selectedValue);
-                BufferedImage image = ProductRDFOperations.getPictureforItemNo(item.getProductCode());
+                item = ProductRDFOperations.getForEPC(selectedValue);
+                BufferedImage image = getPictureforItemNo(item.getProductCode());
                 BufferedImage resizedImage = new BufferedImage(jLabel23.getWidth(),jLabel23.getHeight(), BufferedImage.TYPE_INT_RGB);
                 Graphics2D g = resizedImage.createGraphics();
                 g.drawImage(image, 0, 0, jLabel23.getWidth(),jLabel23.getHeight(), null);
@@ -2005,12 +2014,13 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
         for (int i = 0; i < count; i++) {
             epcSet.add((String) listModel2.getElementAt(i));
         }
-        for (String epc :epcSet)
-        {
-            Product item;
-            try {
-                item = ProductRDFOperations.getItemForEPC(epc);
-                StockRDFOperations.setStockToSold(customerName, epc);
+        try {
+            String epcArray [] = epcSet.toArray(new String[0]);
+            StockRDFOperations.setStockToSold(customerName, epcArray);
+            
+            for (String epc :epcSet)
+            {
+                Product item = ProductRDFOperations.getForEPC(epc);
                 
                 // remove item from stock
                 itemsInStock.remove(epc);
@@ -2028,12 +2038,10 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                 StockHistoryUtil.addToHistoryLog(event);
                 addItemToJtable7(event);
                 itemName += item.getProductName()+ ", ";
-                
-            } catch (InventoryManagementException e) {
-                logMessage(e.getMessage());
             }
+        } catch (InventoryManagementException e) {
+            logMessage(e.getMessage());
         }
-        
         listModel2.removeAllElements();
         jTextField6.setText("");
         JOptionPane.showMessageDialog(this, "Item "+itemName+" sold to "+customerName);
@@ -2142,21 +2150,21 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
         JPanel content = (JPanel) window.getContentPane();
         content.setBackground(Color.white);
         // Set the window's bounds, centering the window
-        int width = 450;
-        int height = 115;
+        int width = 366;
+        int height = 160;
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
         int x = (screen.width - width) / 2;
         int y = (screen.height - height) / 2;
         window.setBounds(x, y, width, height);
 
         // Build the splash screen
-        JLabel label = new JLabel(new ImageIcon("logo.gif"));
-        JLabel copyrt = new JLabel("today:" + new Date(),
+        JLabel label = new JLabel(new ImageIcon("logo.jpg"));
+        JLabel copyrt = new JLabel("Start Time : " + new Date(),
             JLabel.RIGHT);
-        copyrt.setFont(new Font("Sans-Serif", Font.BOLD, 12));
+        copyrt.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
         content.add(label, BorderLayout.CENTER);
         content.add(copyrt, BorderLayout.SOUTH);
-        content.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 10));
+        content.setBorder(BorderFactory.createLineBorder(new Color(210, 210, 210), 1));
 
         // Display it
         window.setVisible(true);
@@ -2262,7 +2270,7 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                     tagId = ((EPC_96) tag.getEPCParameter()).getEPC().toString();
                 else
                     tagId = ((EPCData) tag.getEPCParameter()).getEPC().toString();
-                item = ProductRDFOperations.getItemForEPC(tagId);
+                item = ProductRDFOperations.getForEPC(tagId);
 
                 // in case of item not belong to our repository return
                 if(null == item){
@@ -2330,7 +2338,7 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
                 }
                 // sale of inventory
                 else if(antennaID == salesAntenna){
-                    Stock stock = StockRDFOperations.getStockDetailsForEpc(tagId);
+                    Stock stock = StockRDFOperations.getForEpc(tagId);
                     if(stock.isSold()){
                         addToTable2(stock);
                     }else{
@@ -2430,5 +2438,33 @@ public class LLRPInventoryTracker extends javax.swing.JFrame implements MessageH
             } catch (InterruptedException e) { }
             
         }
+    }
+    
+    public BufferedImage getPictureforItemNo(String itemNo) throws InventoryManagementException {
+        
+        URL url;
+        try {
+            url = new URL(ConfigManager.IMAGE_ACCESS_PATH+itemNo+".jpeg");
+            BufferedImage bf = ImageIO.read(url);
+
+            return bf;
+        } catch (MalformedURLException e) {
+           throw new InventoryManagementException(e);
+        } catch (IOException e) {
+            throw new InventoryManagementException(e);
+        }
+    }
+    
+    public void uploadProductImage( File uploadFile, String productCode){
+
+        try {
+            MultipartUtility multipart = new MultipartUtility(ConfigManager.IMAGE_UPLOAD_PATH, "UTF-8");
+            multipart.addFormField("productCode", productCode);
+            multipart.addFilePart("fileUpload", uploadFile);
+            multipart.finish();
+        } catch (IOException ex) {
+            logMessage(ex.getMessage());
+        }
+    
     }
 }
